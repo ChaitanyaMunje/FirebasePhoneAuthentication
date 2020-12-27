@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +15,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -28,150 +31,97 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+    //variable for Firebase Auth
+    private FirebaseAuth mFirebaseAuth;
+    //declaring a const int value which we will be using in Firebase auth.
+    public static final int RC_SIGN_IN = 1;
+    //creating an auth listner for our Firebase auth
+    private FirebaseAuth.AuthStateListener mAuthStateListner;
 
-    //variable for FirebaseAuth class
-    private FirebaseAuth mAuth;
-    //variable for our text input field for phone and OTP.
-    private EditText edtPhone,edtOTP;
-    //buttons for generating OTP and verifying OTP
-    private Button verifyOTPBtn,generateOTPBtn;
-    //string for storing our verification ID
-    private String verificationId;
-
-
+    //below is the list which we have created in which we can add the authentication which we have todisplay inside our app.
+    List<AuthUI.IdpConfig> providers = Arrays.asList(
+            //below is the line for adding email and password authentication.
+            new AuthUI.IdpConfig.EmailBuilder().build(),
+            //below line is used for adding google authentication builder in our app.
+            new AuthUI.IdpConfig.GoogleBuilder().build(),
+            //below line is used for adding phone authentication builder in our app.
+            new AuthUI.IdpConfig.PhoneBuilder().build());
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //below line is for getting instance of our FirebaseAuth.
-        mAuth = FirebaseAuth.getInstance();
-        //initializing variables for button and Edittext.
-        edtPhone = findViewById(R.id.idEdtPhoneNumber);
-        edtOTP = findViewById(R.id.idEdtOtp);
-        verifyOTPBtn = findViewById(R.id.idBtnVerify);
-        generateOTPBtn = findViewById(R.id.idBtnGetOtp);
-
-        //setting onclick listner for generate OTP button.
-        generateOTPBtn.setOnClickListener(new View.OnClickListener() {
+        //below line is for getting instance for our firebase auth
+        mFirebaseAuth=FirebaseAuth.getInstance();
+        //below line is used for calling auth listner for oue Firebase authentication.
+        mAuthStateListner=new FirebaseAuth.AuthStateListener() {
+            @SuppressLint("ResourceType")
             @Override
-            public void onClick(View v) {
-                //below line is for checking weather the user has entered his mobile number or not.
-                if (TextUtils.isEmpty(edtPhone.getText().toString()) ){
-                    //when mobile number text field is empty displaying a toast message.
-                    Toast.makeText(MainActivity.this, "Please enter a valid phone number.", Toast.LENGTH_SHORT).show();
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                //we are calling method for on authentication state changed.
+                //below line is used for getting current user which is authenticated previously.
+                FirebaseUser user=firebaseAuth.getCurrentUser();
+                //checking if the user is null or not.
+                if (user!=null)
+                {
+                    //if the user is already authenticated then we will redirect our user to next screen which is our home screen.
+                    //we are redirecting to new screen via an intent.
+                    Intent i=new Intent(MainActivity.this,HomeActivity.class);
+                    startActivity(i);
+                    //we are caling finish method to kill or mainactivity which is displaying our login ui.
+                    finish();
+                }
+                else {
+                    //this method is called when our user is not authenticated previously.
+                    startActivityForResult(
+                            //below line is used for getting our authentication instance.
+                            AuthUI.getInstance()
+                                    //below line is used to create our sign in intet
+                                    .createSignInIntentBuilder()
+                                    //below line is used for adding smart lock for our authentication.
+                                    //smart lock is used to check if the user is authentication through different devices.
+                                    //currently we are disabling it.
+                                    .setIsSmartLockEnabled(false)
+                                    //we are adding different login providers which we have mentioned above in our list.
+                                    // we can add more providers according toour requirement which are avaliable in firebase.
+                                    .setAvailableProviders(providers)
+                                    //below line is for customizing our theme for login screen and set logo method is used for adding logo for our login page.
+                                    .setLogo(R.drawable.gfgimage).setTheme(R.style.Theme)
+                                    //after setting our theme and logo we are calling a build() method to build our login screen.
+                                    .build(),
+                            //and lastly we are passing our const integer which is declared above.
+                            RC_SIGN_IN
+                    );
 
-                }else{
-                    //if the text field is not empty we are calling our send OTP method for gettig OTP from Firebase.
-                    String phone ="+91"+edtPhone.getText().toString();
-                    sendVerificationCode(phone);
                 }
             }
-        });
-
-        //initializing on click listner for verify otp button
-        verifyOTPBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //validating if the OTP text field is empty or not.
-                if (TextUtils.isEmpty(edtOTP.getText().toString())){
-                    //if the OTP text field is empty display a message to user to enter OTP
-                    Toast.makeText(MainActivity.this, "Please enter OTP", Toast.LENGTH_SHORT).show();
-                }else{
-                    //if OTP field is not empty calling method to verify the OTP.
-                    verifyCode(edtOTP.getText().toString());
-                }
-
-            }
-        });
-
-
+        };
 
     }
 
-    private void signInWithCredential(PhoneAuthCredential credential) {
-        //inside this method we are checking if the code entered is correct or not.
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            //if the code is correct and the task is succesful we are sending our user to new activity.
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //we are calling our auth listner method on app resume.
+        mFirebaseAuth.addAuthStateListener(mAuthStateListner);
+    }
 
-                            Intent i =new Intent(MainActivity.this,HomeActivity.class);
-                            startActivity(i);
-                            finish();
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //here we are calling remove auth listner method on stop.
+        mFirebaseAuth.removeAuthStateListener(mAuthStateListner);
 
-                        } else {
-                            //if the code is not correct then we are displaying an error message to the user.
-                            Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
     }
 
 
 
 
-    private void sendVerificationCode(String number) {
-        //this method is used for getting OTP on user phone number.
 
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                number,//first parameter is user's mobile number
-                60,//second parameter is time limit for OTP verification which is 60 seconds in our case.
-                TimeUnit.SECONDS,// third parameter is for initializing units for time period which is in seconds in our case.
-                TaskExecutors.MAIN_THREAD,//this task will be excuted on Main thread.
-                mCallBack//we are calling callback method when we recieve OTP for auto verification of user.
-        );
-
-    }
-
-    //callback method is called on Phone auth provider.
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks
-            //initializing our callbacks for on verification callback method.
-            mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-        //below method is used when OTP is sent from Firebase
-        @Override
-        public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            super.onCodeSent(s, forceResendingToken);
-            //when we recieve the OTP it contains a unique id wich we are storing in our string which we have already created.
-            verificationId = s;
-        }
-
-        //this method is called when user recieve OTP from Firebase.
-        @Override
-        public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-            //below line is used for getting OTP code which is sent in phone auth credentials.
-            final String code = phoneAuthCredential.getSmsCode();
-            //checking if the code is null or not.
-            if (code != null) {
-                //if the code is not null then we are setting that code to our OTP edittext field.
-                edtOTP.setText(code);
-                //after setting this code to OTP edittext field we are calling our verifycode method.
-                verifyCode(code);
-
-            }
-
-        }
-
-        //thid method is called when firebase doesnot sends our OTP code due to any error or issue.
-        @Override
-        public void onVerificationFailed(FirebaseException e) {
-            //displaying error message with firebase exception.
-            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    };
-
-    //below method is use to verify code from Firebase.
-    private void verifyCode(String code) {
-        //below line is used for getting getting credentials from our verification id and code.
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-        //after getting credential we are calling sign in method.
-        signInWithCredential(credential);
-    }
 
 
 }

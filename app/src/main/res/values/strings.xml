@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GFG App</string>
+    <string name="my_node">Node</string>
 </resources>

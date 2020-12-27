@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
+    <!--welcome message in text view-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,7 +14,23 @@
         android:padding="10dp"
         android:text="Geeks for Geeks \n Welcome to Home Screen"
         android:textAlignment="center"
+        android:id="@+id/idheadTV"
         android:textColor="@color/purple_500"
         android:textSize="20sp" />
+
+    <!--Button for logout from the app-->
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:textAllCaps="false"
+        android:id="@+id/idBtnLogout"
+        android:layout_below="@id/idheadTV"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        />
+
+
 
 </RelativeLayout>

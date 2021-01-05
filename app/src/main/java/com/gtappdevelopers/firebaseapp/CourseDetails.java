@@ -63,6 +63,9 @@ public class CourseDetails extends AppCompatActivity {
                             for (DocumentSnapshot d : list) {
                                 //after getting this list we are passing that list to our object class.
                                 Courses c = d.toObject(Courses.class);
+                                //below is the updated line of code which we have to add to pass the document id inside our modal class.
+                                //we are setting our document id with d.getId() method
+                                c.setId(d.getId());
                                 //and we will pass this object class inside our arraylist which we have created for recyclcer view.
                                 coursesArrayList.add(c);
                             }

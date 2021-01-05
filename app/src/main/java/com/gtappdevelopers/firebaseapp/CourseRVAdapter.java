@@ -1,6 +1,7 @@
 package com.gtappdevelopers.firebaseapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +47,8 @@ public class CourseRVAdapter extends RecyclerView.Adapter<CourseRVAdapter.ViewHo
 
      class ViewHolder extends RecyclerView.ViewHolder{
         //creating variables for our text views.
-        private TextView courseNameTV;
-        private TextView courseDurationTV;
+        private final TextView courseNameTV;
+        private final TextView courseDurationTV;
 
          public ViewHolder(@NonNull View itemView) {
              super(itemView);
@@ -55,6 +56,22 @@ public class CourseRVAdapter extends RecyclerView.Adapter<CourseRVAdapter.ViewHo
              courseNameTV = itemView.findViewById(R.id.idTVCourseName);
              courseDurationTV = itemView.findViewById(R.id.idTVCourseDuration);
 
+             //here we are adding on click listner for our item of recycler view.
+             itemView.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     //after clicking of the item of recycler view.
+                     //we are passing our course object to the new activity.
+                     Courses courses = coursesArrayList.get(getAdapterPosition());
+                     //below line is creating a new intent.
+                     Intent i =new Intent(context,UpdateCourse.class);
+                     //below line is for putting our course object to our next activity.
+                     i.putExtra("course",courses);
+                     //after passing the data we are starting our activity.
+                     context.startActivity(i);
+
+                 }
+             });
 
          }
      }

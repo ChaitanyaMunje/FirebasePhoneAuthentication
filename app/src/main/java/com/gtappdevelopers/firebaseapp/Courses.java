@@ -1,11 +1,32 @@
 package com.gtappdevelopers.firebaseapp;
 
-public class Courses {
+import com.google.firebase.firestore.Exclude;
+
+import java.io.Serializable;
+
+//we have to implement our modal class with serializable so that we can pass our object class to new activity on
+//our item click of recycler view.
+public class Courses implements Serializable {
+
+    //getter method for our id
+    public String getId() {
+        return id;
+    }
+
+    //setter method for our id
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    //we are using exclude because we are not saving our id
+    @Exclude
+    private String id;
+
 
     //variables for storing our data.
-    private String courseName,courseDescription,courseDuration;
+    private String courseName, courseDescription, courseDuration;
 
-    public Courses(){
+    public Courses() {
         //empty constructor required for Firebase.
     }
 

@@ -44,14 +44,37 @@
         android:inputType="text" />
 
 
-    <!--Button for updating your course to Firebase-->
-    <Button
-        android:id="@+id/idBtnUpdateCourse"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Update Course Details"
-        android:textAllCaps="false" />
+        android:weightSum="2"
+        android:orientation="horizontal"
+        >
+
+        <!--Button for updating your course to Firebase-->
+        <Button
+            android:id="@+id/idBtnUpdateCourse"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Update Course"
+            android:textAllCaps="false" />
+
+
+        <!--Button for deletingour course-->
+        <Button
+            android:id="@+id/idBtnDeleteCourse"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Delete Course"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+
 
 
 

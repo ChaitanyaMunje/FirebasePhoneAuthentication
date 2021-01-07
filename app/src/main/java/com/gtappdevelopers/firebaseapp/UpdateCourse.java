@@ -85,28 +85,28 @@ public class UpdateCourse extends AppCompatActivity {
 
     private void deleteCourse(Courses courses) {
         //below line is for getting the collection where we are storing our courses.
-    db.collection("Courses").
-            //after that we are getting the document which we have to delete.
-            document(courses.getId()).
-            //after passing the document id we are calling delete method to delete this document.
-            delete().
-            //after deleting call on complete listner method to delete this data.
-            addOnCompleteListener(new OnCompleteListener<Void>() {
-        @Override
-        public void onComplete(@NonNull Task<Void> task) {
-            //inside on complete method we are checking if the task is succes or not.
-            if (task.isSuccessful()){
-                //this method is called when the task is success
-                //after deleting we are starting our MainActivity.
-                Toast.makeText(UpdateCourse.this, "Course has been deleted from Databse.", Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(UpdateCourse.this,MainActivity.class);
-                startActivity(i);
-            }else {
-                //if the delete operation is failed we are displaying a toast message.
-                Toast.makeText(UpdateCourse.this, "Fail to delete the course. ", Toast.LENGTH_SHORT).show();
-            }
-        }
-    });
+        db.collection("Courses").
+                //after that we are getting the document which we have to delete.
+                        document(courses.getId()).
+                //after passing the document id we are calling delete method to delete this document.
+                        delete().
+                //after deleting call on complete listner method to delete this data.
+                        addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //inside on complete method we are checking if the task is succes or not.
+                        if (task.isSuccessful()) {
+                            //this method is called when the task is success
+                            //after deleting we are starting our MainActivity.
+                            Toast.makeText(UpdateCourse.this, "Course has been deleted from Databse.", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(UpdateCourse.this, MainActivity.class);
+                            startActivity(i);
+                        } else {
+                            //if the delete operation is failed we are displaying a toast message.
+                            Toast.makeText(UpdateCourse.this, "Fail to delete the course. ", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
     }
 
@@ -119,18 +119,18 @@ public class UpdateCourse extends AppCompatActivity {
         //below line is use to get the collection of our Firebase Firestore.
         db.collection("Courses").
                 //below line is use toset the id of document where we have to perform update operation.
-                document(courses.getId()).
+                        document(courses.getId()).
                 //after setting our document id we are passing our whole object class to it.
-                set(updatedCourse).
+                        set(updatedCourse).
                 //after passing our object class we are calling a method for on succes listner.
-                addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                //on successful completion of this process
-                //we are displaying the toast message.
-                Toast.makeText(UpdateCourse.this, "Course has been updated..", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+                        addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //on successful completion of this process
+                        //we are displaying the toast message.
+                        Toast.makeText(UpdateCourse.this, "Course has been updated..", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             //inside on failure method we are displaying a failure message.
             @Override
             public void onFailure(@NonNull Exception e) {

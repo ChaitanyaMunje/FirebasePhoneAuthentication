@@ -37,6 +37,15 @@
             android:textColor="@color/black"
             android:padding="2dp"
             />
+        <!--Textview for displaying our Course Description-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/idTVCourseDescription"
+            android:text="Description"
+            android:textColor="@color/black"
+            android:padding="2dp"
+            />
 
 
 

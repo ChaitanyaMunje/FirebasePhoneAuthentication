@@ -15,7 +15,6 @@
         <activity android:name=".AddCoursesActivity"></activity>
         <activity android:name=".UpdateCourse" />
         <activity android:name=".CourseDetails" />
-        <activity android:name=".HomeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -110,4 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void Next(View view) {
+        Intent i =new Intent(MainActivity.this,AddCoursesActivity.class);
+        startActivity(i);
+        
+    }
 }

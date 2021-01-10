@@ -37,6 +37,7 @@ public class CourseRVAdapter extends RecyclerView.Adapter<CourseRVAdapter.ViewHo
         Courses courses = coursesArrayList.get(position);
         holder.courseNameTV.setText(courses.getCourseName());
         holder.courseDurationTV.setText(courses.getCourseDuration());
+        holder.courseDescTV.setText(courses.getCourseDescription());
     }
 
     @Override
@@ -49,12 +50,14 @@ public class CourseRVAdapter extends RecyclerView.Adapter<CourseRVAdapter.ViewHo
         //creating variables for our text views.
         private final TextView courseNameTV;
         private final TextView courseDurationTV;
+        private final TextView courseDescTV;
 
          public ViewHolder(@NonNull View itemView) {
              super(itemView);
              //initializing our text views.
              courseNameTV = itemView.findViewById(R.id.idTVCourseName);
              courseDurationTV = itemView.findViewById(R.id.idTVCourseDuration);
+             courseDescTV = itemView.findViewById(R.id.idTVCourseDescription);
 
              //here we are adding on click listner for our item of recycler view.
              itemView.setOnClickListener(new View.OnClickListener() {
